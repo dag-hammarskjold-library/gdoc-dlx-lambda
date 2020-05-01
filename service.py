@@ -80,9 +80,11 @@ def handler(event, context):
         metadata, files = get_metadata(res.content, 'N')
         print("Got {} entries.".format(len(metadata)))
         docx, pdf = files
-        if docx != '':
-            md5sum = hashlib.md5(docx).hexdigest
-            print(md5sum)
-        if pdf != '':
-            md5sum = hashlib.md5(pdf).hexdigest
-            print(md5sum)
+        # In theory we should be able to pass binary data contained in 
+        # the docx and pdf variables to the dlx files module, which can
+        # then run mime detection, file size calculation, md5 checksum
+        # calculation, etc., and then save it to S3.
+
+    # Run this again for Geneva, DutyStation = 'GE' and file prefix = 'G'
+
+    return {}
