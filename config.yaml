@@ -1,0 +1,11 @@
+region: us-east-1
+
+function_name: gdoc-dlx
+handler: service.handler
+description: GDOC to DLX Periodic Task Runner
+runtime: python3.8
+role: service-role/dlx-dl-role-ggxqj9bh
+
+# Build options
+build:
+  source_directories: lib # a comma delimited list of directories in your project root that contains source to package.
