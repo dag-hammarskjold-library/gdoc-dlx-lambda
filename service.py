@@ -3,31 +3,21 @@ import boto3
 import json
 import datetime
 import hashlib
+import os
 from io import BytesIO
 from zipfile import ZipFile
-
-'''
-additional_params = {
-        'AppName': 'gDoc',
-        'DstOff': 'Y',
-        'Odsstatus': 'Y',
-        'DownloadFiles': 'N',   # Out of the gate, we don't want to download the files.
-        'LocalDate': datetime.datetime.now().__str__(),
-        'ResultType': 'Released',
-        'DateFrom': date_from,
-        'DateTo': date_to,
-        'DutyStation': '',
-    }
-'''
+from dlx import DB
+from dlx.file import File, Identifier, FileExists, FileExistsIdentifierConflict, FileExistsLanguageConflict
+from dlx.file.s3 import S3
 
 LANGS = {
-    'A': 'ar',
-    'C': 'zh',
-    'E': 'en',
-    'F': 'fr',
-    'G': 'de',
-    'R': 'ru',
-    'S': 'es'
+    'A': 'AR',
+    'C': 'ZH',
+    'E': 'EN',
+    'F': 'FR',
+    'G': 'DE',
+    'R': 'RU',
+    'S': 'ES'
 }
 
 class GDOCEntry(object):
@@ -127,13 +117,29 @@ class GDOC(object):
 def handler(event, context):
     # set dynamic params
 
-    five_minutes = datetime.timedelta(minutes=60*24)
+    print(event)
+
+    minutes_ago = datetime.timedelta(minutes=5)
+    if event['minutes-ago']:
+        minutes_ago = datetime.timedelta(minutes=event['minutes-ago'])
+    
     date_to = datetime.datetime.now()
-    date_from = date_to - five_minutes
+    date_from = date_to - minutes_ago
 
     ssm_client = boto3.client('ssm')
+    parameter_name = 'connect-string'
+    if event['connect-string-parameter-name']:
+        parameter_name = event['connect-string-parameter-name']
+
+    db_connect = ssm_client.get_parameter(Name=parameter_name)['Parameter']['Value']
+    db_client = DB.connect(db_connect)
+    creds = json.loads(ssm_client.get_parameter(Name='default-aws-credentials')['Parameter']['Value'])
     gdoc_api_secrets = json.loads(ssm_client.get_parameter(Name='gdoc-api-secrets')['Parameter']['Value'])
     gdoc_url = 'https://conferenceservices.un.org/ICTSAPI/ODS/GetODSDocumentsV2'
+
+    S3.connect(
+        creds['aws_access_key_id'], creds['aws_secret_access_key'], creds['bucket']
+    )
 
     for duty_station in ['NY', 'GE']:
         print("Getting metadata for files released in {} from {} to {}".format(duty_station, date_from, date_to))
@@ -145,6 +151,23 @@ def handler(event, context):
             zipfile = gdoc.get_files_by_symbol(entry.id)
             #for ext in ['pdf', 'docx']:
             for f in entry.files:
-                if "{}".format(f['filename']) in zipfile.namelist():
-                    print("Found: {}".format(f['filename']))
-    return {}
+                got_file = zipfile.open(f['filename'])
+                try:
+                    imported = File.import_from_handle(
+                        handle=got_file,
+                        filename=f['filename'],
+                        identifiers=[Identifier('symbol', entry.symbols[0]), Identifier('symbol', entry.symbols[1])],
+                        languages=[f['language']], 
+                        mimetype='application/pdf', 
+                        source='gDoc::{}'.format(duty_station)
+                    )
+                    print("Imported {}".format(imported))
+                except FileExists:
+                    print("File already exists in the database. Continuing.")
+                    pass
+                except:
+                    raise
+    return {
+        'status_code': 200,
+        'message': 'The operation completed successfully.'
+    }
