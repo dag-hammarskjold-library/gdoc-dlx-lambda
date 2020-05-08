@@ -9,6 +9,6 @@
         "arn:aws:events:us-east-1:950236537949:rule/gdoc-dlx-rule"
     ],
     "minutes-ago": 1440,
-    "connect-string-parameter-name": "dlx-dev-connect-string",
-    "description": "Sample event against the development database, covering the last 24 hours. This is the default event."
+    "connect-string-parameter-name": "connect-string",
+    "description": "Sample event against the production database, covering the last 24 hours. Invoke via `lambda invoke --event-file prod-event.json`."
 }
