@@ -125,6 +125,16 @@ def handler(event, context):
     
     date_to = datetime.datetime.now()
     date_from = date_to - minutes_ago
+    if event['date-from']:
+        if event['date-to']:
+            date_to = event['date-to']
+            date_from = event['date-from']
+        else:
+            print("Date To is required if using Date From.")
+            return {
+                'status_code': 400,
+                'message': 'Invalid datee selections. Date To is required if using Date From.'
+            }
 
     ssm_client = boto3.client('ssm')
     parameter_name = 'connect-string'

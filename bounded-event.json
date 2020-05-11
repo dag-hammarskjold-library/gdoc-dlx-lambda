@@ -1,0 +1,7 @@
+{
+    "minutes-ago": 1440,
+    "date-from": "2020-05-03 15:22:16.229185",
+    "date-to": "2020-05-04 15:22:16.229185",
+    "connect-string-parameter-name": "connect-string",
+    "description": "Sample event against the production database, covering a start and end date. Invoke via `lambda invoke --event-file bounded-event.json`."
+}

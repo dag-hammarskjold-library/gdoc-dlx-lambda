@@ -1,13 +1,4 @@
 {
-    "id": "cdc73f9d-aea9-11e3-9d5a-835b769c0d9c",
-    "detail-type": "Scheduled Event",
-    "source": "aws.events",
-    "account": "{{account-id}}",
-    "time": "1970-01-01T00:00:00Z",
-    "region": "us-east-1",
-    "resources": [
-        "arn:aws:events:us-east-1:950236537949:rule/gdoc-dlx-rule"
-    ],
     "minutes-ago": 1440,
     "connect-string-parameter-name": "connect-string",
     "description": "Sample event against the production database, covering the last 24 hours. Invoke via `lambda invoke --event-file prod-event.json`."
