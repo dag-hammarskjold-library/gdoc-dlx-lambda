@@ -9,6 +9,7 @@ from zipfile import ZipFile
 from dlx import DB
 from dlx.file import File, Identifier, FileExists, FileExistsIdentifierConflict, FileExistsLanguageConflict
 from dlx.file.s3 import S3
+from dlx.util import ISO6391
 
 LANGS = {
     'A': 'AR',
@@ -70,8 +71,10 @@ class GDOC(object):
 
             for entry in metadata:
                 symbol1 = entry['symbol1']
+                symbols = [symbol1]
                 symbol2 = entry['symbol2']
-                symbols = [symbol1, symbol2]
+                if len(symbol2) > 0:
+                    symbols.append(symbol2)
                 if symbol1 not in symbol_list:
                     # We haven't seen this symbol yet
                     this_meta = GDOCEntry(symbols)
@@ -113,6 +116,13 @@ class GDOC(object):
             return zipfile
         except:
             raise
+
+def encode_fn(symbols, language, extension):
+    
+    ISO6391.codes[language.lower()]
+    symbols = [symbols] if isinstance(symbols, str) else symbols
+    xsymbols = [sym.translate(str.maketrans(' /[]*:;', '__^^!#%')) for sym in symbols]
+    return '{}-{}.{}'.format('&'.join(xsymbols), language.upper(), extension)
 
 def handler(event, context):
     # set dynamic params
@@ -163,10 +173,15 @@ def handler(event, context):
             for f in entry.files:
                 got_file = zipfile.open(f['filename'])
                 try:
+                    filename = encode_fn(entry.symbols, f['language'], 'pdf')
+                    print(filename)
+                    identifiers = []
+                    for s in entry.symbols:
+                        identifiers.append(Identifier('symbol',s))
                     imported = File.import_from_handle(
                         handle=got_file,
-                        filename=f['filename'],
-                        identifiers=[Identifier('symbol', entry.symbols[0]), Identifier('symbol', entry.symbols[1])],
+                        filename=filename,
+                        identifiers=identifiers,
                         languages=[f['language']], 
                         mimetype='application/pdf', 
                         source='gDoc::{}'.format(duty_station)
