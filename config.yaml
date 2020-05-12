@@ -4,7 +4,7 @@ function_name: gdoc-dlx
 handler: service.handler
 description: GDOC to DLX Periodic Task Runner
 runtime: python3.8
-role: service-role/dlx-dl-role-ggxqj9bh
+role: service-role/gdoc-dlx-role-389djnm9
 
 # Build options
 build:
