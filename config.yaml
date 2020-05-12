@@ -5,6 +5,7 @@ handler: service.handler
 description: GDOC to DLX Periodic Task Runner
 runtime: python3.6
 role: service-role/gdoc-dlx-role-389djnm9
+timeout: 315
 
 # Build options
 build:
