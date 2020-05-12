@@ -120,7 +120,7 @@ def handler(event, context):
     print(event)
 
     minutes_ago = datetime.timedelta(minutes=5)
-    if event['minutes-ago']:
+    if 'minutes-ago' in event:
         minutes_ago = datetime.timedelta(minutes=event['minutes-ago'])
     
     date_to = datetime.datetime.now()
@@ -138,7 +138,7 @@ def handler(event, context):
 
     ssm_client = boto3.client('ssm')
     parameter_name = 'connect-string'
-    if event['connect-string-parameter-name']:
+    if 'connect-string-parameter-name' in event:
         parameter_name = event['connect-string-parameter-name']
 
     db_connect = ssm_client.get_parameter(Name=parameter_name)['Parameter']['Value']
