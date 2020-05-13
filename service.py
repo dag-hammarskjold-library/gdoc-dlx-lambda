@@ -171,7 +171,7 @@ def handler(event, context):
             zipfile = gdoc.get_files_by_symbol(entry.id)
             #for ext in ['pdf', 'docx']:
             for f in entry.files:
-                got_file = zipfile.open(f['filename'])
+                got_file = zipfile.open(f['filename'], 'r')
                 try:
                     filename = encode_fn(entry.symbols, f['language'], 'pdf')
                     print(filename)
