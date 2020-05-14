@@ -129,7 +129,7 @@ def handler(event, context):
 
     print(event)
 
-    minutes_ago = datetime.timedelta(minutes=5)
+    minutes_ago = datetime.timedelta(minutes=1440)
     if 'minutes-ago' in event:
         minutes_ago = datetime.timedelta(minutes=event['minutes-ago'])
     
