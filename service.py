@@ -171,7 +171,11 @@ def handler(event, context):
             zipfile = gdoc.get_files_by_symbol(entry.id)
             #for ext in ['pdf', 'docx']:
             for f in entry.files:
-                got_file = zipfile.open(f['filename'], 'r')
+                try:
+                    got_file = zipfile.open(f['filename'], 'r')
+                except KeyError:
+                    print("MissingFileException: File {} was not found in the archive for {}.".format(f['filename'], entry.symbols[0]))
+                    next
                 try:
                     filename = encode_fn(entry.symbols, f['language'], 'pdf')
                     print(filename)
