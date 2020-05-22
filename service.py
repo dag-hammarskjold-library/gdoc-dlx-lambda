@@ -135,7 +135,7 @@ def handler(event, context):
     
     date_to = datetime.datetime.now()
     date_from = date_to - minutes_ago
-    if 'dater-from' in event:
+    if 'date-from' in event:
         if 'date-to' in event:
             date_to = event['date-to']
             date_from = event['date-from']
