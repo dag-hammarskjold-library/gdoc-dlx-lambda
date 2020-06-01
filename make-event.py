@@ -7,13 +7,15 @@ event = {
 }
 
 #today_date = date.today()
-today_date = date(2020, 5, 1)
-wayback_start_date = date(2018, 11, 1)
+today_date = date(2019, 1, 11)
+wayback_start_date = date(2018, 10, 15)
 a_week_ago = timedelta(weeks=1)
 this_start = today_date - a_week_ago
 this_end = today_date
 
-sys.stdout = open('event.log', 'w', buffering=1)
+right_now = str(date.today())
+
+sys.stdout = open('event-{}.log'.format(right_now), 'w+', buffering=1)
 
 while this_start >= wayback_start_date:
     event['date-from'] = "{} 00:00:00".format(str(this_start))
