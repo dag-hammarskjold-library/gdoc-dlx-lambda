@@ -7,8 +7,8 @@ event = {
 }
 
 #today_date = date.today()
-today_date = date(2019, 1, 11)
-wayback_start_date = date(2018, 10, 15)
+today_date = date(2020, 6, 2)
+wayback_start_date = date(2020, 5, 15)
 a_week_ago = timedelta(weeks=1)
 this_start = today_date - a_week_ago
 this_end = today_date
