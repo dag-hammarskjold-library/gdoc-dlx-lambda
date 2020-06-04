@@ -15,7 +15,7 @@ this_end = today_date
 
 right_now = str(date.today())
 
-sys.stdout = open('event-{}.log'.format(right_now), 'w+', buffering=1)
+sys.stdout = open('event-{}.log'.format(right_now), 'a+', buffering=1)
 
 while this_start >= wayback_start_date:
     event['date-from'] = "{} 00:00:00".format(str(this_start))

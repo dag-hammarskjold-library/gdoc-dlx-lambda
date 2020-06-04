@@ -26,19 +26,31 @@ class GDOCEntry(object):
         return str(return_data)
 
 class GDOC(object):
-    def __init__(self, url, secrets, duty_station, date_from, date_to):
+    def __init__(self, url, secrets, duty_station='NY', date_from=None, date_to=None, symbol=None):
+        
         self.url = url
         self.secrets = secrets
         self.basic_params = {
             'AppName': 'gDoc',
             'DstOff': 'Y',
             'Odsstatus': 'Y',
-            'DutyStation': duty_station,
+            #'DutyStation': duty_station,
             'LocalDate': datetime.datetime.now().__str__(),
             'ResultType': 'Released',
-            'DateFrom': date_from,
-            'DateTo': date_to
+            #'DateFrom': date_from,
+            #'DateTo': date_to
         }
+        if duty_station is not None:
+            self.basic_params.update({'DutyStation': duty_station})
+
+        if date_from is not None:
+            self.basic_params.update({'DateFrom': date_from})
+
+        if date_to is not None:
+            self.basic_params.update({'DateTo': date_to})
+
+        if symbol is not None:
+            self.basic_params.update({'Symbol': symbol})
     
     def metadata_only(self):
         parameters = {
