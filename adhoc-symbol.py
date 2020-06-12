@@ -2,6 +2,7 @@ import argparse
 from datetime import date, datetime, timedelta
 import boto3
 import json
+import sys
 from dlx import DB
 from dlx.file.s3 import S3
 from dlx.file import File, Identifier, FileExists, FileExistsIdentifierConflict, FileExistsLanguageConflict
@@ -10,8 +11,8 @@ from gdoc import GDOCEntry, GDOC, encode_fn
 parser = argparse.ArgumentParser(description='Run a gDoc process ad-hoc for one symbol.')
 parser.add_argument('symbol', metavar='symbol', type=str)
 
-#right_now = str(date.today())
-#sys.stdout = open('event-{}.log'.format(right_now), 'a+', buffering=1)
+right_now = str(date.today())
+sys.stdout = open('event-{}.log'.format(right_now), 'a+', buffering=1)
 
 args = parser.parse_args()
 
@@ -31,10 +32,18 @@ S3.connect(
 )
 
 # First try to get the file from NY. 
-
-print("Getting metadata for files released in {} for {}".format('NY', args.symbol))
-gdoc = GDOC(gdoc_url, gdoc_api_secrets, 'NY', None, None, args.symbol)
+duty_station = 'NY'
+print("Getting metadata for files released in {} for {}".format(duty_station, args.symbol))
+gdoc = GDOC(gdoc_url, gdoc_api_secrets, duty_station, None, None, args.symbol)
 metadata = gdoc.metadata_only()
+if len(metadata) < 1:
+    print("Not a {} file, moving on.".format(duty_station))
+    duty_station = 'GE'
+    print("Getting metadata for files released in {} for {}".format(duty_station, args.symbol))
+    gdoc = GDOC(gdoc_url, gdoc_api_secrets, duty_station, None, None, args.symbol)
+    metadata = gdoc.metadata_only()
+    if len(metadata) < 1:
+        print("Not a {} file either. The symbol doesn't have files available.".format(duty_station))
 for entry in metadata:
     print(entry.__str__())
     print("Fetching files for symbol {}".format(entry.id))
