@@ -49,42 +49,42 @@ def handler(event, context):
         creds['aws_access_key_id'], creds['aws_secret_access_key'], creds['bucket']
     )
 
-    for duty_station in ['NY', 'GE']:
-        print("Getting metadata for files released in {} from {} to {}".format(duty_station, date_from, date_to))
-        gdoc = GDOC(gdoc_url, gdoc_api_secrets, duty_station, date_from, date_to)
-        metadata = gdoc.metadata_only()
-        for entry in metadata:
-            print(entry.__str__())
-            print("Fetching files for symbol {}".format(entry.id))
-            zipfile = gdoc.get_files_by_symbol(entry.id)
-            #for ext in ['pdf', 'docx']:
-            for f in entry.files:
+    try:
+        duty_station = event['duty-station']
+    except KeyError:
+        duty_station = 'NY'
+    #for duty_station in ['NY', 'GE']:
+    print("Getting metadata for files released in {} from {} to {}".format(duty_station, date_from, date_to))
+    gdoc = GDOC(gdoc_url, gdoc_api_secrets, duty_station, date_from, date_to)
+    metadata = gdoc.metadata_only()
+    for entry in metadata:
+        print(entry.__str__())
+        print("Fetching files for symbol {}".format(entry.id))
+        zipfile = gdoc.get_files_by_symbol(entry.id)
+        #for ext in ['pdf', 'docx']:
+        for f in entry.files:
+            try:
+                got_file = zipfile.open(f['filename'], 'r')
                 try:
-                    got_file = zipfile.open(f['filename'], 'r')
-                    try:
-                        filename = encode_fn(entry.symbols, f['language'], 'pdf')
-                        print(filename)
-                        identifiers = []
-                        for s in entry.symbols:
-                            identifiers.append(Identifier('symbol',s))
-                        imported = File.import_from_handle(
-                            handle=got_file,
-                            filename=filename,
-                            identifiers=identifiers,
-                            languages=[f['language']], 
-                            mimetype='application/pdf', 
-                            source='gDoc::{}'.format(duty_station)
-                        )
-                        print("Imported {}".format(imported))
-                    except FileExists:
-                        print("File already exists in the database. Continuing.")
-                        pass
-                    except:
-                        raise
-                except KeyError:
-                    print("MissingFileException: File {} was not found in the archive for {}.".format(f['filename'], entry.symbols[0]))
-                    next
-    return {
-        'status_code': 200,
-        'message': 'The operation completed successfully.'
-    }
+                    filename = encode_fn(entry.symbols, f['language'], 'pdf')
+                    print(filename)
+                    identifiers = []
+                    for s in entry.symbols:
+                        identifiers.append(Identifier('symbol',s))
+                    imported = File.import_from_handle(
+                        handle=got_file,
+                        filename=filename,
+                        identifiers=identifiers,
+                        languages=[f['language']], 
+                        mimetype='application/pdf', 
+                        source='gDoc::{}'.format(duty_station)
+                    )
+                    print("Imported {}".format(imported))
+                except FileExists:
+                    print("File already exists in the database. Continuing.")
+                    pass
+                except:
+                    raise
+            except KeyError:
+                print("MissingFileException: File {} was not found in the archive for {}.".format(f['filename'], entry.symbols[0]))
+                next

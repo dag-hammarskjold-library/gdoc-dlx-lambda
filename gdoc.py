@@ -119,7 +119,15 @@ class GDOC(object):
 
 def encode_fn(symbols, language, extension):
     
-    ISO6391.codes[language.lower()]
+    languages = language
+    if isinstance(language, list):
+        language_list = []
+        for lang in language:
+            language_list.append(lang.lower())
+        languages = "-".join(language_list)
+    else:
+        languages = language.lower()
+
     symbols = [symbols] if isinstance(symbols, str) else symbols
     xsymbols = [sym.translate(str.maketrans(' /[]*:;', '__^^!#%')) for sym in symbols]
-    return '{}-{}.{}'.format('&'.join(xsymbols), language.upper(), extension)
+    return '{}-{}.{}'.format('&'.join(xsymbols), languages.upper(), extension)
