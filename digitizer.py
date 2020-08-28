@@ -50,17 +50,17 @@ with open(args.filename) as csvfile:
     this_reader = csv.reader(csvfile,delimiter='\t')
     for row in this_reader:
         print(row)
-        filename = row[0].split('/')[-1]
-        subfolder = row[0].split('/')[:-1]
-        symbol = row[1]
+        filename = row[0]
+        subfolder = row[1]
+        symbol = row[2]
         lang = LANGS['E']
         if "," in row[2]:
             lang = []
-            langs = row[2].split(',')
+            langs = row[3].split(',')
             for l in langs:
                 lang.append(LANGS[l])
         else:
-            lang = [LANGS[row[2]]]
+            lang = [LANGS[row[3]]]
 
 
         ext = filename.split('.')[-1]
