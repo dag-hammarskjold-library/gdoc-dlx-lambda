@@ -1,0 +1,4 @@
+dlx @ git+https://github.com/dag-hammarskjold-library/dlx
+gdoc_api @ git+https://github.com/dag-hammarskjold-library/gdoc-api
+python_lambda
+requests_oauthlib

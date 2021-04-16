@@ -1,6 +1,4 @@
 {
-    "duty-station": "NY",
-    "minutes-ago": 1440,
-    "connect-string-parameter-name": "dlx-dev-connect-string",
-    "description": "Sample event against the development database, covering the last 24 hours. This is the default event."
+    "duty_station": "NY",
+    "date": "2021-03-01"
 }
