@@ -1,5 +1,5 @@
 from gdoc_api.scripts import gdoc_dlx
-import sys
+import sys, datetime
 
 def handler(event, context):
     # This is necessary because the python-lambda commands get passed to the gdoc_dlx.run function
@@ -12,10 +12,12 @@ def handler(event, context):
     try:
         date = event["date"]
     except:
-        date = "2021-03-01"
+        today = datetime.date.today()
+        yesterday = today - datetime.timedelta(days=1)
+        date = yesterday
 
     try:
-        gdoc_dlx.run(station="NY", date="2021-03-01")
+        gdoc_dlx.run(station=duty_station, date=date)
     except:
         raise
 
