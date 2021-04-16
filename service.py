@@ -4,6 +4,8 @@ import sys, datetime
 def handler(event, context):
     # This is necessary because the python-lambda commands get passed to the gdoc_dlx.run function
     sys.argv = [sys.argv[0]]
+
+    print(f"Processing {event}")
     
     try:
         duty_station = event["duty_station"]
