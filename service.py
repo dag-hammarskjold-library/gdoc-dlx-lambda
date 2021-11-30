@@ -19,7 +19,7 @@ def handler(event, context):
         date = yesterday
 
     try:
-        gdoc_dlx.run(station=duty_station, date=date)
+        gdoc_dlx.run(station=duty_station, date=date, recursive=True)
     except:
         raise
 
