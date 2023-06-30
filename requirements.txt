@@ -1,5 +1,5 @@
 dlx @ git+https://github.com/dag-hammarskjold-library/dlx
 gdoc_api @ git+https://github.com/dag-hammarskjold-library/gdoc-api
-python_lambda
+python-lambda @ git+https://github.com/nficano/python-lambda@2f9f17a5c5993e65ee2b61d06f29ed5a6689d337
 requests
 requests_oauthlib
